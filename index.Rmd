@@ -1,7 +1,6 @@
 ---
-title: "Points allocation in the Eurovision Song Contest"
+title: "**Points allocation in the Eurovision Song Contest**"
 author: "Paul Gering"
-date: "`r Sys.Date()`"
 output:
   html_document: default
   word_document: default
@@ -10,7 +9,15 @@ output:
 
 
 ```{r echo = FALSE, result = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
+
+#Load here package
+if (!require('here')) 
+{
+  install.packages('here');
+}
 library(here)
+
+# Show Eurovision logo in Markdown file
 logo <- here("figs","esc.jpg")
 knitr::include_graphics(logo)
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE, rows.print = 5, fig.align = "center")
@@ -19,13 +26,13 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FAL
 # Introduction
 ### Background
 
-This project will use data from the **Eurovision Song Contest**. The Eurovision Song Contest is a yearly competition where different countries submit an artist and song to compete in a live televised event against songs from other countries. Each participating country awards points to their favourite songs and the winning country with the most points is allowed to host the contest the following year. 
+This project will use data from the **Eurovision Song Contest**. The Eurovision Song Contest is a yearly competition where different countries submit an artist and song to compete in a live televised event against other countries. Each participating country awards points to their favourite songs and the country with the most points is allowed to host the contest the following year. 
 The first contest took place in 1956 and included 14 songs from 7 countries. Since then, the contest has grown dramatically, with the 2022 competition hosted in Turin Italy including songs from 40 countries. In recent years, the competition has gained popularity in countries outside Europe, with Australia joining the contest in 2015, the competition being televised in China and America, and America staging their own version of the competition in 2022 called the "American Song Contest". 
 
-Over the 67 years that the competition has been held, the voting system that has been used to determine the winning song has changed drastically. Changes in the voting system have likely affected the number of points that are needed to win the competition.
+Over the 67 years that the competition has been held, the voting system used to determine the winning song has changed drastically. Changes in the voting system have affected the number of points awarded to each country and therefore, the points total needed to win the competition.
 
 ### Project Aim
-This project will seek to visualize how changes in the **voting system** have affected the number of **points** accumulated by the **winning song** in each year of the competition. A secondary aim of this project will be to visualise which winning songs were the most successful in terms of the number of points they received. 
+This project will seek to visualize how changes in the **voting system** have affected the number of points allocated in each year. Specifically, this project will seek to visualise differences in the number of **points** accumulated by the **winning song** in each year of the competition, and how this relates to the voting system used in each year. 
 
 ### Project organization 
 The /raw folder contains the raw data used for this project and /figs contains the figures produced from this project. 
@@ -33,12 +40,9 @@ The /raw folder contains the raw data used for this project and /figs contains t
 A codebook can be found in the project folder, which describes the variables and the functions used in the project. 
 
 ### Loading Packages
-The renv package was used to store package versions used within the project.
-
-Package versions are listed within the file /renv.lock.
+The renv package was used to store the packages used in this project, and to keep an account of the package versions that were used. These can be found in the file /renv.lock.
 
 ```{r loadlib, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE}
-
 #Load packages with renv
 if (!require('renv')) 
 {
@@ -47,7 +51,7 @@ if (!require('renv'))
 library(renv)
 renv::restore()
 
-#Import packages
+#Load packages
 library(dplyr)
 library(ggplot2)
 library(here)
@@ -59,16 +63,16 @@ library(rvest)
 ```
 
 ### Data Origins 
-The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. To be able to access the full data, you need to select the year you would like to view data from. If you wanted to access the data for the 2022 competition, you would be taken the following link <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2022 competition "https://eurovision.tv/event/turin-2022/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from each year and combine them into a large dataset.
+The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. You can only access the data from one year at a time, by selecting the year that you would like to view on this page. Selecting the year would take you to an overview page that would appear in the following format <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2022 competition "https://eurovision.tv/event/turin-2022/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from the URLs for each year and combine them into a large dataset.
 
 ### Data scraping
 
-Before scraping the datatables, I first had to scrape the URL links for each year of the competition. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". Once semi finals were introduced in the 2004 competition, the URL link containing the final data now finished with "/grand-final". The inconsistency of the URL links meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2007 and 2022. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1991. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1992-2003) and "/grand-final" at the end of their URL (2004-2006). Once I had collected the URL links from the Eurovision website, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. 
+I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2007 and 2022. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1991. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1992-2003) and "/grand-final" at the end of their URL (2004-2006). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. 
 
 
 ```{r message = FALSE}
 
-## trying to scrape the data from multiple pages - page 3, 4 and 5
+#-----------SCRAPING DATA FROM PAGES 3, 4 & 5 -------------
 
 df56 <- data.frame() # declaring df56 will be a data frame
 
@@ -79,22 +83,22 @@ for(page_result in 2:4) {
   
   # getting nested links for each year of the contest
   year_links = page %>% 
-    html_nodes(".views-field-field-event-year a") %>% 
-    html_attr("href") %>% 
-    paste0("https://eurovision.tv", ., "/final")
+    html_nodes(".views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
+    html_attr("href") %>%                                         # Extract href (e.g., turin-2022) from scraped data
+    paste0("https://eurovision.tv", ., "/final")                  # Pasting the href into the URL
   
-  # retrieving the tables and the years from each year link
+  # retrieving the tables and the years from each nested link
   get_data <- lapply(year_links, function(i) {
-    year_page = read_html(i)
+    year_page = read_html(i)                                      # Reading each URL link into R
     year_data = year_page %>% 
       html_nodes("table.cols-7") %>% 
       html_table() %>%  
-      .[[1]]
-    year <- str_extract(i, "\\d{4}")
-    year_data$year <- year
+      .[[1]]                                                      # Scraping the data tables from each URL link
+    year <- str_extract(i, "\\d{4}")                              # Extracting the year from the URL links
+    year_data$year <- year                                        # Adding the year data to the data tables
     
     
-    return(year_data)
+    return(year_data)                                             # Asking R to return the datatable 
   })
   # Adding all data to a new datatable called df56
   df56 = rbind(df56, data.table::rbindlist(get_data))
@@ -106,61 +110,75 @@ for(page_result in 2:4) {
 
 ```{r echo = FALSE}
 
-## scrape data from page 1
+#-----------SCRAPING DATA FROM PAGE 1 -------------
 
 df01 <- data.frame() # declaring df01 will be a data frame
 
 link = "https://eurovision.tv/history"
 page = read_html(link) # downloading the link for page 1
 
+
 # getting nested links for each year of the contest on page 1
-year_links1 = page %>% html_nodes(".views-field-field-event-year a") %>% 
-  html_attr("href") %>% paste("https://eurovision.tv", ., "/grand-final", sep="")
+year_links1 = page %>% 
+  html_nodes(".views-field-field-event-year a") %>%               # Asking R to find this data on the webpage
+  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/grand-final", sep="")       # Pasting the href into the URL
+
 
 # retrieving the tables and the years from each year link
 get_data1 <- lapply(year_links1, function(i) {
-  year_page = read_html(i)
-  year_data = year_page %>% html_nodes("table.cols-7") %>% 
-    html_table() %>%  .[[1]]
-  year <- str_extract(i, "\\d{4}")
-  year_data$year <- year
+  year_page = read_html(i)                                        # Reading each URL link into R
+  year_data = year_page %>% 
+    html_nodes("table.cols-7") %>% 
+    html_table() %>% 
+    .[[1]]                                                        # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
+  year_data$year <- year                                          # Adding the year data to the data tables
   
-  return(year_data)
+  return(year_data)                                               # Asking R to return the datatable 
 })
+
 
 # Adding all data to a new datatable called df01
 df01 = data.table::rbindlist(get_data1)
 
 
-## scrape data from final from page 2 (2004-2006)
+#-----------SCRAPING DATA FROM PAGE 2 (2004:2006) -------------
+
 
 df04 <- data.frame() # declaring df04 will be a data frame
 
 link = "https://eurovision.tv/history?page=1"
 page = read_html(link) # downloading the link for page 2
 
+
 # getting nested links for 2004, 2005 and 2006 competitions from page 2
-year_links04 = page %>% html_nodes("tr:nth-child(2) .views-field-field-event-year a , 
-                                 tr:nth-child(3) .views-field-field-event-year a , 
-                                 tr:nth-child(1) .views-field-field-event-year a") %>% 
-  html_attr("href") %>% paste("https://eurovision.tv", ., "/grand-final", sep="")
+year_links04 = page %>% 
+html_nodes("tr:nth-child(2) .views-field-field-event-year a , 
+tr:nth-child(3) .views-field-field-event-year a , 
+tr:nth-child(1) .views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
+  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/grand-final", sep="")       # Pasting the href into the URL
+
 
 # retrieving the tables and the years from each year link
 get_data04 <- lapply(year_links04, function(i) {
-  year_page = read_html(i)
-  year_data = year_page %>% html_nodes("table.cols-7") %>% 
-    html_table() %>%  .[[1]]
-  year <- str_extract(i, "\\d{4}")
-  year_data$year <- year
+  year_page = read_html(i)                                        # Reading each URL link into R
+  year_data = year_page %>% 
+    html_nodes("table.cols-7") %>% 
+    html_table() %>%  
+    .[[1]]                                                        # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
+  year_data$year <- year                                          # Adding the year data to the data tables
   
-  return(year_data)
+  return(year_data)                                               # Asking R to return the datatable 
 })
 
 # Adding all data to a new datatable called df04
 df04 = data.table::rbindlist(get_data04)
 
 
-## scrape data from final from page 2 (1992-2003)
+#-----------SCRAPING DATA FROM PAGE 2 (1991:2003) -------------
 
 
 df92 <- data.frame() # declaring df92 will be a data frame
@@ -170,37 +188,43 @@ page = read_html(link) # downloading the link for page 2
 
 
 # getting nested links for 1992-2003 competitions from page 2
-year_links_92 = page %>% html_nodes("tr:nth-child(5) .views-field-field-event-year a , 
-                                 tr:nth-child(6) .views-field-field-event-year a , 
-                                 tr:nth-child(7) .views-field-field-event-year a , 
-                                 tr:nth-child(8) .views-field-field-event-year a , 
-                                 tr:nth-child(9) .views-field-field-event-year a , 
-                                 tr:nth-child(10) .views-field-field-event-year a , 
-                                 tr:nth-child(11) .views-field-field-event-year a , 
-                                 tr:nth-child(12) .views-field-field-event-year a , 
-                                 tr:nth-child(13) .views-field-field-event-year a , 
-                                 tr:nth-child(14) .views-field-field-event-year a , 
-                                 tr:nth-child(15) .views-field-field-event-year a , 
-                                 tr:nth-child(4) .views-field-field-event-year a") %>% 
-  html_attr("href") %>% paste("https://eurovision.tv", ., "/final", sep="")
+year_links_92 = page %>% 
+html_nodes("tr:nth-child(5) .views-field-field-event-year a , 
+tr:nth-child(6) .views-field-field-event-year a , 
+tr:nth-child(7) .views-field-field-event-year a , 
+tr:nth-child(8) .views-field-field-event-year a ,
+tr:nth-child(9) .views-field-field-event-year a , 
+tr:nth-child(10) .views-field-field-event-year a , 
+tr:nth-child(11) .views-field-field-event-year a , 
+tr:nth-child(12) .views-field-field-event-year a , 
+tr:nth-child(13) .views-field-field-event-year a , 
+tr:nth-child(14) .views-field-field-event-year a , 
+tr:nth-child(15) .views-field-field-event-year a , 
+tr:nth-child(4) .views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
+  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/final", sep="")             # Pasting the href into the URL
+
 
 # retrieving the tables and the years from each year link
 get_data_92 <- lapply(year_links_92, function(i) {
-  year_page = read_html(i)
-  year_data = year_page %>% html_nodes("table.cols-7") %>% 
-    html_table() %>%  .[[1]]
-  year <- str_extract(i, "\\d{4}")
-  year_data$year <- year
+  year_page = read_html(i)                                        # Reading each URL link into R
+  year_data = year_page %>% 
+    html_nodes("table.cols-7") %>% 
+    html_table() %>%  
+    .[[1]]                                                        # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
+  year_data$year <- year                                          # Adding the year data to the data tables
   
-  return(year_data)
+  return(year_data)                                               # Asking R to return the datatable 
 })
+
 
 # Adding all data to a new datatable called df92
 df92 = data.table::rbindlist(get_data_92)
 ```
 
 ### Combining the scraped data
-Once I had scraped all the Eurovision data and added them to four dataframes, I combined them into a single dataframe using the function rbind(). This dataframe was saved as a CSV file. 
+Once I had scraped all the Eurovision data, the four dataframes were combined using the function rbind(). The final dataframe containing all the data was saved as a CSV file.
 
 ```{r message = FALSE}
 # Combining the four datasets into a dataframe and saving it as a csv
@@ -213,9 +237,9 @@ write.csv(df_esc, here("raw", "esc_raw_data.csv"))
 
 ### A limitation of this data scraping method
 
-To scrape the URL's from the second page on the Eurovision website <https://eurovision.tv/history?page=1>, two sets of code had to be used. These codes differed only in the URLs that they scraped, one piece of code scraped URL's that ended in "/final" while the other scraped URL's that ended in "/grand-final". For each piece of code, SelectorGadget was used to highlight the location of the year links that I wanted to scrape on the page. This means that my code is dependent of the location of the year data on this page. Once the data from a new competition is added to the Eurovision website, this may shift the location of the year links on this page, which will affect the data that is scraped from the website by my R code. For example, code that is designed to scrape URL's that end with "/final" may try to scrape URL's from the 2004 competition. This could result in R attempting to locate a URL that does not exist.
+To scrape the URL's from the second page on the Eurovision website <https://eurovision.tv/history?page=1>, two sets of code had to be used. These codes were identical except one piece of code scraped URL links ending in "final" and the other scraped URL links ending in "/grand-final". For this method to work, SelectorGadget was used to highlight the location of the year links that I wanted to scrape for each piece of code. This means that my code to scrape data from page 2 is dependent of the location of the year links on this page. Once the data from a new competition is added to the Eurovision website, this may shift the location of the year links on this page, which will affect the data that is scraped by my R code. For example, code that is designed to scrape URL's that end with "/final" may try to scrape URL's from the 2004 competition. This could prevent the R code from working because R is attempting to locate a URL that does not exist.
 
-To minimise the impact that changes to the Eurovision website have on this R project, a combined dataset containing all the information from the competitions between 1957 and 2023 was saved as a CSV file. The rest of the R code will run based off the data in this CSV file. 
+By saving the scraped data as a CSV file, I have tried to minimise the impact that changes to the Eurovision website have on this R project. The rest of the R code, that is focused on data management and visualisation, will run based off the data in this CSV file. 
 
 ```{r}
 
@@ -227,20 +251,20 @@ head(df)
 ### Description of the data 
 
 The data contains 8 variables, which are: 
-  * R/O Sort descending: the order in which the songs performed in the contest
-  * Half: whether the country performed in the first or second half of the contest
-  * Country: the name of the country
-  * Participant: the name of the artist 
-  * Song: the name of the song
-  * Points: the total amount of points each country received 
-  * Rank: the rank which the song achieved in the contest
-  * year: the year of the competition
+  **R/O Sort descending** is the order in which the songs performed in the contest,
+  **Half** is whether the country performed in the first or second half of the contest,
+  **Country** is the name of the participating country,
+  **Participant** is the name of the artist, 
+  **Song** is the name of the song,
+  **Points** is the total amount of points each country received, 
+  **Rank** is the position which the song achieved in the final, and
+  **year** is the year of the competition.
 
 # Data Preparation
 
 ### Cleaning the column names 
 
-The column names contained capitals and special characters. To avoid running into problems visualisation of the data using R, I used the clean_names() function from the janitor package to tidy these names.  
+The column names contain capitals and special characters, which may cause errors in the R code and will not look appealing in a visualisation. For this reason, I used the clean_names() function from the janitor package to tidy these names.  
 
 ```{r message = FALSE}
 #--------------TIDY DATA------------------
@@ -254,7 +278,7 @@ df <- clean_names(df)
 
 Since there were multiple winning songs in 1969, the 1969 competition has been repeated four times on the page "https://eurovision.tv/history?page=3". This has resulted in the 1969 data being scraped multiple times. The below code was used to remove the duplicate rows for the 1969 competition.
 
-At this point, I also wanted to select the columns that were relevant to the visualisation. The following columns were dropped because they contained data that would not be useful for the visualisation: half, r_o_sort_descending and x. The X column was added when the data was saved as a CSV and then read into R.
+The same set of code has also been used to drop columns that contain irrelevant data. The following columns were dropped because they contained data that would not be used for the visualisation: half, r_o_sort_descending and x. The x column was added when the data was saved as a CSV and then read into R. The half column only contains data for the 2021 competition, so will not be useful when trying to compare data across the years of the competition. The r_o_sort_descending may have been interesting to visualise, but will not be useful for this visualisation. 
 
 ```{r message = FALSE}
 df1 <- df %>% 
@@ -264,9 +288,9 @@ df1 <- df %>%
 
 ### Replacing missing data in the dataset
 
-There are 51 pieces of missing data in the dataframe, under the points column. The Eurovision Website is inconsistent in how it represents zero points in the datatables, with some years using the number zero and others using a blank space. These blank spaces have been converted to NA's. To avoid problems when presenting the data as a visualisation, I wanted to convert them back into 0's.
+There are 51 pieces of missing data in the dataframe, under the points column. The Eurovision Website is inconsistent in how it represents zero points in the datatables, with some years using the number zero and others using a blank space. When the data was scraped from the Eurovision website, these blank spaces were converted to NA's. Since the NA's may lead to errors when visualising the data, I converted them back into zeros.
 
-A large proportion of the missing data is from the 1956 competition. The reason for this is that the points allocation process was not made public in 1956 only. Since this data does not contain any useful points data, it is unnecessary to keep this data in the dataframe.
+A large proportion of the missing data is from the 1956 competition. The reason for this is that the points allocation process was not made public for the 1956 competition. The lack of any useful points data for the 1956 competition meant that this data could be removed from the dataframe.
 
 ```{r message = FALSE}
 # To count the NA's in each column: colSums(is.na(df))
@@ -278,10 +302,11 @@ df2 <- df1 %>%
 
 ### Additional information added to the dataframe
 
-**Voting system data** was taken manually from the website Eurovision.World.com, a fan website dedicated to the Eurovision Song Contest (<https://eurovisionworld.com/esc/voting-systems-in-eurovision-history>). The reason this website was chosen was because the information is not presented on the eurovision website. Other information on the Eurovision.World.com has been checked with the Eurovision website for accuracy including the points totals in specific years of the competition.  Data scraping was not conducted in this instance because the data was not presented in a format that would be presentable and easy to understand in a visualisation. Instead, the data was summarised and added to the data frame by creating a new column called voting system. The seven different voting systems were added to the column by create seven voting system variables and using the mutate function. The number at the end of each variable name represents the year that the voting system was introduced.
+**Voting system data** was taken manually from the website Eurovision.World.com, a fan website dedicated to the Eurovision Song Contest (<https://eurovisionworld.com/esc/voting-systems-in-eurovision-history>). The reason this website was chosen was because the information is not presented on the Eurovision website. Other information on the Eurovision.World.com has been checked with the Eurovision website for accuracy such as the points totals in specific years of the competition. The voting system data was not scraped directly from Eurovision.World.com because the data was not presented in a format that would complement a visualisation. The descriptions were too long and may have been difficult for a non-Eurovision fan to understand. Instead, the data was summarised and added to seven voting systems variables in R. The number at the end of each variable name represents the year that the voting system was introduced.
+Using the mutate function, this data was added to the data frame as new column called voting system.
 
 ```{r message = FALSE}
-# Adding changes to the voting system - data from eurovision.tv
+# Adding voting system data to variables in R
 
 voting_system16 <- "Two sets of points (12, 10, 8, 7, ....1) awarded to ten songs"
 voting_system75 <- "One set of points (12, 10, 8, 7, ....1) awarded to ten songs"
@@ -291,7 +316,7 @@ voting_system64 <- "One set of points (5, 3, 1) awarded to three songs"
 voting_system63 <- "One set of points (5, 4, 3, 2, 1) awarded to five songs"
 voting_system71 <- "2-10 points awarded to each song"
 
-# adding a new column for voting system to the dataframe using mutate()
+# adding a new column for voting system to the dataframe
 
 df3 <- df2 %>% 
   mutate(voting_system = case_when(year > 2015 ~ voting_system16,
@@ -308,6 +333,8 @@ df3 <- df2 %>%
                                    year == 1964 | year == 1965 | 
                                      year == 1966 ~ voting_system64))
 
+# Changing the order of the voting systems in the dataset so that they appear in chronological order
+
 df3$voting_system <- factor(df3$voting_system, 
                             levels = c("10 points split between one to ten songs", 
                                        "One set of points (3, 2, 1) awarded to three songs", 
@@ -322,7 +349,7 @@ df3$voting_system <- factor(df3$voting_system,
 
 ### Creating a dataframe with only the winning songs for each year
 
-I decided to present the changes in the points allocation process by visualising the number of points accumulated by the winning songs. I felt that this would be a more intuitive and interesting method of visualisation than to use the total number of points or average amount of points allocated in each year. As a result, I filtered the dataset so that I would only keep data from the winning songs. 
+Since the visualisation will only present data for the winning songs, I needed to filter this data out of the dataset. I felt that it would be a more intuitive and interesting to visualise the points totals for the winning songs than to visualise the total or average number of points.
 
 ```{r message = FALSE}
 # Filter data that was ranked 1st
@@ -333,24 +360,27 @@ df4 <- df3 %>%
 head(df4)
 ```
 
-The new dataframe contains four rows for the 1969 competition, because there were four winners in 1969. I want to contain the information for all the winning songs, participants and countries into one row, as this will make the dataset more concise and will support the visualisation of this data in the form of labels on each datapoint. I do not want to change the points, rank or year columns because they were identical for the four songs. 
+The new dataframe contains four rows for the 1969 competition, because there were four winners in 1969. I wanted to collapse these four rows so that the information for all the winning songs, participants and countries appears in a single row. This would be beneficial when adding the information to a scatter plot as it meant that I could add a label to the data containing all the information for the winners in the 1969 competition. Collapsing the four rows was made easier by the fact that the winning songs in 1969 had the same points total, rank and year.
 
 ```{r message = FALSE}
 
+# Adding the four country names to each row for 1969, separated by a comma
 df4$country <- ifelse(df4$year == 1969,
                       paste(unique(df4$country[df4$year == 1969]), collapse = ", "),
                       df4$country)
 
+# Adding the four song names to each row for 1969, separated by a comma
 df4$song <- ifelse(df4$year == 1969,
                        paste(unique(df4$song[df4$year == 1969]), collapse = ", "),
                        df4$song)
 
+# Adding the four participant names to each row for 1969, separated by a comma
 df4$participant <- ifelse(df4$year == 1969,
                     paste(unique(df4$participant[df4$year == 1969]), collapse = ", "),
                     df4$participant)
 
+# Removing the duplicate columns for 1969, leaving one row containing all the data from 1969
 df5 <- df4 %>% 
-  select(year, voting_system, country, participant, song, points) %>% 
   unique()
 
 ```
@@ -358,7 +388,13 @@ df5 <- df4 %>%
 
 # Visualisation
 
-### Labels for the graph 
+### Creating visualisation 1
+
+A scatter plot was most appropriate to visualise how the data changed over time. The year was used as the x axis and points as the y axis, with voting system as the grouping variable. The scale of the x axis was manually set to increase in sets of 5 to make the year data easier to read. The size of each point was increased so that more of the graph was filled and the graph would look less empty and more appealing. However, the size was not increased further to avoid too much overlap between the points.
+
+The plot was converted into a plotly interactive graph using the function ggplotly. This meant that the graph contained labels for each point which would appear when they were hovered over with the cursor. The text contained within each label was the year, the winning country, the song, the participant and the number of points they received. This information was important to include as it would provide further context as to why a winning song may have received more or less points. The datapoint for the 1969 competition will contain the data for the four winning songs in the year. Another benefit of using a Plotly graph is that you can double click on a voting system that you would like to display data for and the plot will isolate the datapoints from this voting system. Plotly can make it difficult to display titles, subtitles, and captions on a ggplot graph. These had to be added in once the graph was converted into a plotly graph using the layout() function. The choice was made to display the legend in a horizontal fashion below the graph. This was appropriate as the legend was long and would have reduced the space available for the graph if presented vertically alongside the graph. 
+
+### Labels for the visualisation 
 
 ```{r message = FALSE}
 #--------------PLOT DATA------------------
@@ -372,11 +408,6 @@ caplab <- "Source: eurovision.tv/history"
 sublab <- "Points total of the winning songs 1957-2022"
 ```
 
-### Creating visualisation 1
-
-A scatter plot was most appropriate to visualise how the data changed over time. The year was used as the x axis and points as the y axis, with voting system was used as the grouping variable. The scale of the x axis was manually set to increase in sets of 5 to make the data easier to read. The size of each point was increased so that more of the graph was filled and the graph would look less empty and more appealing. However, the size was not increased further to avoid too much overlap between the points.
-
-The plot was converted into a plotly interactive graph using the function ggplotly. This meant that the graph could have hover capabilities, so that each point displayed data about the winning song such as the winning country, song and participant when hovered over. Since I collapsed the four rows for 1969, the label for the 1969 point will contain data for all four winning songs. Another benefit of using a Plotly graph is that you can double click on a voting system that you would like to display points for and the plot will isolate the points from this voting system. Plotly can make it difficult to display subtitles and captions on a ggplot graph. These had to be added in once the graph had been converted to a plotly graph using the layout() function. The choice was made to display the legend in a horizontal fashion below the graph. This was appropriate as the legend was long and would have reduced the space available for the graph if presented vertically alongside the graph. 
 
 ```{r message = FALSE}
 ### Creating visualisation 1
@@ -407,12 +438,12 @@ p1 <- p1 + geom_point(size = 2.5) +
 # Converting the ggplot into a ggplotly animation with hover labels
 
 p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
-               height = 600) %>% 
-  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4), 
+               height = 600) %>%                                   # Converting to a plotly graph with specified size
+  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4),     # Changing the margins of the plot
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    sublab,'</sup>')),
+                                    sublab,'</sup>')),             # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
@@ -420,12 +451,13 @@ p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
                             yref = "paper", 
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
-                            font=list(size=13)))
+                            font=list(size=13)))                   # Adding a annotation to the plot
 p1 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
-                             y =-0.2)) %>% 
+                             y =-0.2)) %>%                         # Changing the legend to be horizontal
   style(legendgroup = NULL)
+
 ```
 
 ### Visualisation 1 summary
@@ -502,12 +534,12 @@ p2 <- p2 + geom_point(size = 2.5) +
 # Converting the ggplot into a ggplotly animation with hover labels
 
 p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
-               height = 600) %>% 
-  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4), 
+               height = 600) %>%                                    # Converting to a plotly graph with specified size
+  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4),      # Changing the margins of the plot
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    sublab2,'</sup>')),
+                                    sublab2,'</sup>')),             # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
@@ -515,12 +547,13 @@ p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
                             yref = "paper", 
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
-                            font=list(size=13)))
+                            font=list(size=13)))                    # Adding a annotation to the plot
 p2 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
-                             y =-0.2)) %>% 
+                             y =-0.2)) %>%                          # Changing the legend to be horizontal
   style(legendgroup = NULL)
+
 
 ```
 
@@ -538,3 +571,8 @@ I decided not to include data about whether the points were coming from a jury, 
 Another interesting way to investigate the Eurovision data would be to visualise the effect of running order position on the points totals of each song in the contest. There is an assumption among Eurovision fans that the 2nd position in either the semi-finals or the grand-final is the worst position to perform from. It would be interesting to investigate whether this is true. 
 
 Finally, this Eurovision data could also be used to determine whether certain countries are more likely to give points to one another. Eurovision is seen by many to be politically motivated, where certain countries are more likely to do poorly than others. It has become a running joke in the Eurovision community that Cyprus and Greece will always give each other maximum points. It would be interesting to find a way to visualise this in the future.
+
+
+
+
+
