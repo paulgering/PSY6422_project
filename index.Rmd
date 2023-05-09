@@ -8,11 +8,13 @@ output:
   pdf_document: default
 ---
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
+```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 #Load packages with renv
 library(renv)
 renv::restore()
+```
 
+```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
 library(here)
 logo <- here("figs","esc.jpg")
 knitr::include_graphics(logo)
