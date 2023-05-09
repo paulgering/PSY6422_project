@@ -8,13 +8,8 @@ output:
   pdf_document: default
 ---
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
-#Load packages with renv
-library(renv)
-renv::restore()
-```
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
+```{r echo = FALSE, result = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
 library(here)
 logo <- here("figs","esc.jpg")
 knitr::include_graphics(logo)
@@ -43,8 +38,12 @@ The renv package was used to store package versions used within the project.
 Package versions are listed within the file /renv.lock.
 
 ```{r loadlib, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE}
+
 #Load packages with renv
-install.packages("renv")
+if (!require('renv')) 
+{
+  install.packages('renv');
+}
 library(renv)
 renv::restore()
 
@@ -54,10 +53,9 @@ library(ggplot2)
 library(here)
 library(janitor)
 library(plotly)
-library(rvest)
 library(tidyverse)
 library(toOrdinal)
-
+library(rvest)
 ```
 
 ### Data Origins 
