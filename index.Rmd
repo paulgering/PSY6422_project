@@ -10,7 +10,6 @@ output:
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, out.width = "65%", fig.align = "center"}
 #Load packages with renv
-install.packages("renv")
 library(renv)
 renv::restore()
 
