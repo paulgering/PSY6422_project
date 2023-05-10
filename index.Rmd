@@ -75,7 +75,7 @@ I first had to scrape the URL links that contained the datatables for each year.
 
 #-----------SCRAPING DATA FROM PAGES 3, 4 & 5 -------------
 
-df56 <- data.frame() # declaring df56 will be a data frame
+scrape56 <- data.frame() # declaring scrape56 will be a data frame
 
 # using for loop to download the URL's for from multiple pages
 for(page_result in 2:4) {
@@ -101,8 +101,8 @@ for(page_result in 2:4) {
     
     return(year_data)                                             # Asking R to return the datatable 
   })
-  # Adding all data to a new datatable called df56
-  df56 = rbind(df56, data.table::rbindlist(get_data))
+  # Adding all data to a new datatable called scrape56
+  scrape56 = rbind(scrape56, data.table::rbindlist(get_data))
   
 }
 
@@ -113,21 +113,21 @@ for(page_result in 2:4) {
 
 #-----------SCRAPING DATA FROM PAGE 1 -------------
 
-df01 <- data.frame() # declaring df01 will be a data frame
+scrape07 <- data.frame() # declaring scrape07 will be a data frame
 
 link = "https://eurovision.tv/history"
 page = read_html(link) # downloading the link for page 1
 
 
 # getting nested links for each year of the contest on page 1
-year_links1 = page %>% 
+year_links = page %>% 
   html_nodes(".views-field-field-event-year a") %>%               # Asking R to find this data on the webpage
   html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
   paste("https://eurovision.tv", ., "/grand-final", sep="")       # Pasting the href into the URL
 
 
 # retrieving the tables and the years from each year link
-get_data1 <- lapply(year_links1, function(i) {
+get_data <- lapply(year_links, function(i) {
   year_page = read_html(i)                                        # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
@@ -140,21 +140,21 @@ get_data1 <- lapply(year_links1, function(i) {
 })
 
 
-# Adding all data to a new datatable called df01
-df01 = data.table::rbindlist(get_data1)
+# Adding all data to a new datatable called scrape07
+scrape07 = data.table::rbindlist(get_data)
 
 
 #-----------SCRAPING DATA FROM PAGE 2 (2004:2006) -------------
 
 
-df04 <- data.frame() # declaring df04 will be a data frame
+scrape04 <- data.frame() # declaring scrape04 will be a data frame
 
 link = "https://eurovision.tv/history?page=1"
 page = read_html(link) # downloading the link for page 2
 
 
 # getting nested links for 2004, 2005 and 2006 competitions from page 2
-year_links04 = page %>% 
+year_links = page %>% 
 html_nodes("tr:nth-child(2) .views-field-field-event-year a , 
 tr:nth-child(3) .views-field-field-event-year a , 
 tr:nth-child(1) .views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
@@ -163,7 +163,7 @@ tr:nth-child(1) .views-field-field-event-year a") %>%             # Asking R to 
 
 
 # retrieving the tables and the years from each year link
-get_data04 <- lapply(year_links04, function(i) {
+get_data <- lapply(year_links, function(i) {
   year_page = read_html(i)                                        # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
@@ -175,21 +175,21 @@ get_data04 <- lapply(year_links04, function(i) {
   return(year_data)                                               # Asking R to return the datatable 
 })
 
-# Adding all data to a new datatable called df04
-df04 = data.table::rbindlist(get_data04)
+# Adding all data to a new datatable called scrape04
+scrape04 = data.table::rbindlist(get_data)
 
 
 #-----------SCRAPING DATA FROM PAGE 2 (1991:2003) -------------
 
 
-df92 <- data.frame() # declaring df92 will be a data frame
+scrape92 <- data.frame() # declaring scrape92 will be a data frame
 
 link = "https://eurovision.tv/history?page=1"
 page = read_html(link) # downloading the link for page 2
 
 
 # getting nested links for 1992-2003 competitions from page 2
-year_links_92 = page %>% 
+year_links = page %>% 
 html_nodes("tr:nth-child(5) .views-field-field-event-year a , 
 tr:nth-child(6) .views-field-field-event-year a , 
 tr:nth-child(7) .views-field-field-event-year a , 
@@ -207,7 +207,7 @@ tr:nth-child(4) .views-field-field-event-year a") %>%             # Asking R to 
 
 
 # retrieving the tables and the years from each year link
-get_data_92 <- lapply(year_links_92, function(i) {
+get_data <- lapply(year_links, function(i) {
   year_page = read_html(i)                                        # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
@@ -220,8 +220,8 @@ get_data_92 <- lapply(year_links_92, function(i) {
 })
 
 
-# Adding all data to a new datatable called df92
-df92 = data.table::rbindlist(get_data_92)
+# Adding all data to a new datatable called scrape92
+scrape92 = data.table::rbindlist(get_data)
 ```
 
 ### Combining the scraped data
@@ -230,7 +230,7 @@ Once I had scraped all the Eurovision data, the four dataframes were combined us
 ```{r message = FALSE}
 # Combining the four datasets into a dataframe and saving it as a csv
 
-df_esc <- rbind(df01, df04, df92, df56)
+df_esc <- rbind(scrape07, scrape04, scrape92, scrape56)
 
 write.csv(df_esc, here("raw", "esc_raw_data.csv"))
 
@@ -402,11 +402,9 @@ The plot was converted into a plotly interactive graph using the function ggplot
 # labels that will be added to the plot
 
 plottitle <- "Points allocation in the Eurovision Song Contest"
-xlab <- "Year"
-ylab <- "Points"
 grouplab <- "Voting system for each country"
 caplab <- "Source: eurovision.tv/history"
-sublab <- "Points total of the winning songs 1957-2022"
+subtitle <- "Points total of the winning songs 1957-2022"
 ```
 
 
@@ -432,8 +430,8 @@ p1 <- p1 + geom_point(size = 2.5) +
   scale_x_continuous(limits = c(1955, 2022), 
                      breaks = seq(1955, 2022, 5)) +
   labs(title = plottitle, 
-       x = xlab, 
-       y = ylab,
+       x = "Year", 
+       y = "Points",
        colour = grouplab)
 
 # Converting the ggplot into a ggplotly animation with hover labels
@@ -444,7 +442,7 @@ p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    sublab,'</sup>')),             # Adding a subtitle to the plot
+                                    subtitle,'</sup>')),             # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
@@ -471,7 +469,7 @@ Visualisation 1 shows that the points totals of the winning songs in the Eurovis
 The aim of this project is partially achieved in visualisation 1. This interactive plot shows how changes in the voting system have affected the points totals of the winning songs. However, this plot does not isolate the effect of the voting system changes from the effect of the increasing number of panticipating countries on points allocation. Therefore, it is unclear whether the changes in the points totals of the winning songs are a result of the changes in the voting system. To accurately visualise how voting system has affected points allocation, a second visualisation was produced controlling for the number of participating countries.
 
 ### Adapting the plot to control for the number of countries 
-To control for the number of participating countries, I calculated the share of points that the winning songs received in each year. This was calculated by dividing the total number of points awarded in each year by the number of points allocated to the winning song. 
+To control for the number of participating countries, I calculated the share of points that the winning songs received in each year. This was calculated by dividing the total number of points awarded in each year by the number of points allocated to the winning song. To do this calculation, I added the share of points column to a version of the dataframe that was not filtered by rank.
 
 ```{r message = FALSE}
 # Create a new column to show share of points 
@@ -508,10 +506,13 @@ df8 <- df7 %>%
 
 ### Creating visualisation 2
 
+A new subtitle will be needed for this visualisation: 
+
 ```{r message = FALSE}
-sublab2 <- "Share of points of the winning songs 1957-2022"
-ylab2 <- "Share of points (%)"
+subtitle2 <- "Share of points of the winning songs 1957-2022"
 ```
+
+A similar code is used to construct visualisation 2 asvisualisation 1. The only change is that share of points will be used for the y axis instead of points. 
 
 ```{r message = FALSE}
 
@@ -534,8 +535,8 @@ p2 <- p2 + geom_point(size = 2.5) +
   scale_x_continuous(limits = c(1955, 2022), 
                      breaks = seq(1955, 2022, 5)) +
   labs(title = plottitle, 
-       x = xlab, 
-       y = ylab2, 
+       x = "Year", 
+       y = "Share of points (%)", 
        colour = grouplab)
 
 # Converting the ggplot into a ggplotly animation with hover labels
@@ -546,7 +547,7 @@ p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    sublab2,'</sup>')),             # Adding a subtitle to the plot
+                                    subtitle,'</sup>')),             # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
