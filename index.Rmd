@@ -60,6 +60,7 @@ library(plotly)
 library(tidyverse)
 library(toOrdinal)
 library(rvest)
+library(htmlwidgets)
 ```
 
 ### Data Origins 
@@ -452,13 +453,17 @@ p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
                             font=list(size=13)))                   # Adding a annotation to the plot
-p1 %>%  layout(legend = list(orientation = 'h', 
+p1 <- p1 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
                              y =-0.2)) %>%                         # Changing the legend to be horizontal
   style(legendgroup = NULL)
 
+p1
+
+saveWidget(p1, file = here("figs", "points_total_esc.html"))            # Save the plot in the figs folder
 ```
+
 
 ### Visualisation 1 summary
 Visualisation 1 shows that the points totals of the winning songs in the Eurovision Song Contest have increased exponentially over the years. Changes in the points totals have coincided with changes in the voting system, particularly in the early years of the competition. In the first few years, where fewer points were awarded to a smaller number of countries, the points totals for the winning songs were as low as 18 points in 1969, though another explanation for this low points total is that four countries won in that year. Changing the voting system in 1971 led to a rapid increase in the number of points given to the winning song, likely because each country awarded points to each of the songs. Between 1975 and 2003, the same voting system was used, which resulted in the points totals remaining consistent. From the 2004 competition, there is a slight increase in the point totals, which can be explained by the introduction of the semifinals leading to more countries voting in the final. Once the choice was made for each country to allocate two sets of points in 2016, the points totals of the winning songs increased again, leading to the highest points total that has been achieved in the Eurovision Song Contest, Portugal in 2017 with 758 points. 
@@ -550,12 +555,15 @@ p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
                             font=list(size=13)))                    # Adding a annotation to the plot
-p2 %>%  layout(legend = list(orientation = 'h', 
+p2 <- p2 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
                              y =-0.2)) %>%                          # Changing the legend to be horizontal
   style(legendgroup = NULL)
 
+p2
+
+saveWidget(p2, file = here("figs", "points_share_esc.html"))             # Save the plot as a html
 
 ```
 
