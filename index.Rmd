@@ -574,7 +574,9 @@ Another interesting way to investigate the Eurovision data would be to visualise
 
 Finally, this Eurovision data could also be used to determine whether certain countries are more likely to give points to one another. Many people view the points allocation process in Eurovision to be politically motivated, where certain countries are more likely to award points to one another. There may be some truth in this, given that Cyprus and Greece are notorious for giving one another maximum points each year. It would be interesting to find a way to visualise this in the future.
 
-
-
+### References 
+Repo: https://github.com/paulgering/PSY6422_project
+Eurovision website: https://eurovision.tv
+Eurovision.World website: https://eurovisionworld.com
 
 
