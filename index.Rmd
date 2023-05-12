@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FAL
 ### Background
 
 This project will use data from the **Eurovision Song Contest**. The Eurovision Song Contest is a yearly competition where different countries submit an artist and song to compete in a live televised event against other countries. Each participating country awards points to their favourite songs and the country with the most points is allowed to host the contest the following year. 
-The first contest took place in 1956 and included 14 songs from 7 countries. Since then, the contest has grown dramatically, with the 2022 competition hosted in Turin Italy including songs from 40 countries. In recent years, the competition has gained popularity in countries outside Europe, with Australia joining the contest in 2015, the competition being televised in China and America, and America staging their own version of the competition in 2022 called the "American Song Contest". 
+The first contest took place in 1956 and included 14 songs from 7 countries. Since then, the contest has grown dramatically, with the 2023 competition hosted in Liverpool including songs from 37 countries. In recent years, the competition has gained popularity in countries outside Europe, with Australia joining the contest in 2015, the competition being televised in China and America, and America staging their own version of the competition in 2022 called the "American Song Contest". 
 
 Over the 67 years that the competition has been held, the voting system used to determine the winning song has changed drastically. Changes in the voting system have affected the number of points awarded to each country and therefore, the points total needed to win the competition.
 
@@ -61,11 +61,11 @@ library(htmlwidgets)
 ```
 
 ### Data Origins 
-The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. You can only access the data from one year at a time, by selecting the year that you would like to view on this page. Selecting the year would take you to an overview page that would appear in the following format <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2022 competition "https://eurovision.tv/event/turin-2022/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from the URLs for each year and combine them into a large dataset.
+The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. You can only access the data from one year at a time, by selecting the year that you would like to view on this page. Selecting the year would take you to an overview page that would appear in the following format <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2023 competition "https://eurovision.tv/event/liverpool-2023/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from the URLs for each year and combine them into a large dataset.
 
 ### Data scraping
 
-I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2007 and 2022. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1991. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1992-2003) and "/grand-final" at the end of their URL (2004-2006). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. 
+I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2008 and 2023. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1992. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1993-2003) and "/grand-final" at the end of their URL (2004-2007). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. 
 
 
 ```{r message = FALSE}
@@ -110,7 +110,7 @@ for(page_result in 2:4) {
 
 #-----------SCRAPING DATA FROM PAGE 1 -------------
 
-scrape07 <- data.frame() # declaring scrape07 will be a data frame
+scrape08 <- data.frame() # declaring scrape08 will be a data frame
 
 link = "https://eurovision.tv/history"
 page = read_html(link) # downloading the link for page 1
@@ -137,11 +137,11 @@ get_data <- lapply(year_links, function(i) {
 })
 
 
-# Adding all data to a new datatable called scrape07
-scrape07 = data.table::rbindlist(get_data)
+# Adding all data to a new datatable called scrape08
+scrape08 = data.table::rbindlist(get_data)
 
 
-#-----------SCRAPING DATA FROM PAGE 2 (2004:2006) -------------
+#-----------SCRAPING DATA FROM PAGE 2 (2004:2007) -------------
 
 
 scrape04 <- data.frame() # declaring scrape04 will be a data frame
@@ -152,9 +152,7 @@ page = read_html(link) # downloading the link for page 2
 
 # getting nested links for 2004, 2005 and 2006 competitions from page 2
 year_links = page %>% 
-html_nodes("tr:nth-child(2) .views-field-field-event-year a , 
-tr:nth-child(3) .views-field-field-event-year a , 
-tr:nth-child(1) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
+html_nodes("tr:nth-child(2) .views-field-field-event-year a , tr:nth-child(3) .views-field-field-event-year a , tr:nth-child(4) .views-field-field-event-year a , tr:nth-child(1) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
   html_attr("href") %>%       # Extract href (e.g., turin-2022) from scraped data
   paste("https://eurovision.tv", ., "/grand-final", sep="") # Pasting the href into the URL
 
@@ -176,29 +174,18 @@ get_data <- lapply(year_links, function(i) {
 scrape04 = data.table::rbindlist(get_data)
 
 
-#-----------SCRAPING DATA FROM PAGE 2 (1991:2003) -------------
+#-----------SCRAPING DATA FROM PAGE 2 (1993:2003) -------------
 
 
-scrape92 <- data.frame() # declaring scrape92 will be a data frame
+scrape93 <- data.frame() # declaring scrape93 will be a data frame
 
 link = "https://eurovision.tv/history?page=1"
 page = read_html(link) # downloading the link for page 2
 
 
-# getting nested links for 1992-2003 competitions from page 2
+# getting nested links for 1993-2003 competitions from page 2
 year_links = page %>% 
-html_nodes("tr:nth-child(5) .views-field-field-event-year a , 
-tr:nth-child(6) .views-field-field-event-year a , 
-tr:nth-child(7) .views-field-field-event-year a , 
-tr:nth-child(8) .views-field-field-event-year a ,
-tr:nth-child(9) .views-field-field-event-year a , 
-tr:nth-child(10) .views-field-field-event-year a , 
-tr:nth-child(11) .views-field-field-event-year a , 
-tr:nth-child(12) .views-field-field-event-year a , 
-tr:nth-child(13) .views-field-field-event-year a , 
-tr:nth-child(14) .views-field-field-event-year a , 
-tr:nth-child(15) .views-field-field-event-year a , 
-tr:nth-child(4) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
+html_nodes("tr:nth-child(14) .views-field-field-event-year a , tr:nth-child(13) .views-field-field-event-year a , tr:nth-child(12) .views-field-field-event-year a , tr:nth-child(11) .views-field-field-event-year a , tr:nth-child(10) .views-field-field-event-year a , tr:nth-child(9) .views-field-field-event-year a , tr:nth-child(8) .views-field-field-event-year a , tr:nth-child(7) .views-field-field-event-year a , tr:nth-child(6) .views-field-field-event-year a , tr:nth-child(5) .views-field-field-event-year a , tr:nth-child(15) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
   html_attr("href") %>%     # Extract href (e.g., turin-2022) from scraped data
   paste("https://eurovision.tv", ., "/final", sep="") # Pasting the href into the URL
 
@@ -217,8 +204,8 @@ get_data <- lapply(year_links, function(i) {
 })
 
 
-# Adding all data to a new datatable called scrape92
-scrape92 = data.table::rbindlist(get_data)
+# Adding all data to a new datatable called scrape93
+scrape93 = data.table::rbindlist(get_data)
 ```
 
 ### Combining the scraped data
@@ -227,7 +214,7 @@ Once I had scraped all the Eurovision data, the four dataframes were combined us
 ```{r message = FALSE}
 # Combining the four datasets into a dataframe and saving it as a csv
 
-df_esc <- rbind(scrape07, scrape04, scrape92, scrape56)
+df_esc <- rbind(scrape08, scrape04, scrape93, scrape56)
 
 write.csv(df_esc, here("raw", "esc_raw_data.csv"))
 
@@ -404,7 +391,7 @@ The plot was converted into a plotly interactive graph using the function ggplot
 plottitle <- "Points allocation in the Eurovision Song Contest"
 grouplab <- "Voting system for each country"
 caplab <- "Source: eurovision.tv/history"
-subtitle <- "Points total of the winning songs 1957-2022"
+subtitle <- "Points total of the winning songs 1957-2023"
 ```
 
 
@@ -427,8 +414,8 @@ p1 <- ggplot(df5, mapping = aes(x = year,
 # Adding additional elements to the plot e.g., points, scale, title and legends
 
 p1 <- p1 + geom_point(size = 2.5) +
-  scale_x_continuous(limits = c(1955, 2022), 
-                     breaks = seq(1955, 2022, 5)) +
+  scale_x_continuous(limits = c(1955, 2023), 
+                     breaks = seq(1955, 2023, 5)) +
   labs(title = plottitle, 
        x = "Year", 
        y = "Points",
@@ -509,7 +496,7 @@ df8 <- df7 %>%
 A new subtitle will be needed for this visualisation: 
 
 ```{r message = FALSE}
-subtitle2 <- "Share of points of the winning songs 1957-2022"
+subtitle2 <- "Share of points of the winning songs 1957-2023"
 ```
 
 A similar code is used to construct visualisation 2 asvisualisation 1. The only change is that share of points will be used for the y axis instead of points. 
@@ -532,8 +519,8 @@ p2 <- ggplot(df8, mapping = aes(x = year,
 # Adding additional elements to the plot e.g., points, scale, title and legends
 
 p2 <- p2 + geom_point(size = 2.5) +
-  scale_x_continuous(limits = c(1955, 2022), 
-                     breaks = seq(1955, 2022, 5)) +
+  scale_x_continuous(limits = c(1955, 2023), 
+                     breaks = seq(1955, 2023, 5)) +
   labs(title = plottitle, 
        x = "Year", 
        y = "Share of points (%)", 
