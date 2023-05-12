@@ -1,10 +1,7 @@
 ---
 title: "**Points allocation in the Eurovision Song Contest**"
-author: "Paul Gering"
 output:
   html_document: default
-  word_document: default
-  pdf_document: default
 ---
 
 
@@ -84,22 +81,22 @@ for(page_result in 2:4) {
   
   # getting nested links for each year of the contest
   year_links = page %>% 
-    html_nodes(".views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
-    html_attr("href") %>%                                         # Extract href (e.g., turin-2022) from scraped data
-    paste0("https://eurovision.tv", ., "/final")                  # Pasting the href into the URL
+    html_nodes(".views-field-field-event-year a") %>%   # Asking R to find this data on the webpage
+    html_attr("href") %>%     # Extract href (e.g., turin-2022) from scraped data
+    paste0("https://eurovision.tv", ., "/final")  # Pasting the href into the URL
   
   # retrieving the tables and the years from each nested link
   get_data <- lapply(year_links, function(i) {
-    year_page = read_html(i)                                      # Reading each URL link into R
+    year_page = read_html(i)               # Reading each URL link into R
     year_data = year_page %>% 
       html_nodes("table.cols-7") %>% 
       html_table() %>%  
-      .[[1]]                                                      # Scraping the data tables from each URL link
-    year <- str_extract(i, "\\d{4}")                              # Extracting the year from the URL links
-    year_data$year <- year                                        # Adding the year data to the data tables
+      .[[1]]                   # Scraping the data tables from each URL link
+    year <- str_extract(i, "\\d{4}")  # Extracting the year from the URL links
+    year_data$year <- year     # Adding the year data to the data tables
     
     
-    return(year_data)                                             # Asking R to return the datatable 
+    return(year_data)    # Asking R to return the datatable 
   })
   # Adding all data to a new datatable called scrape56
   scrape56 = rbind(scrape56, data.table::rbindlist(get_data))
@@ -121,22 +118,22 @@ page = read_html(link) # downloading the link for page 1
 
 # getting nested links for each year of the contest on page 1
 year_links = page %>% 
-  html_nodes(".views-field-field-event-year a") %>%               # Asking R to find this data on the webpage
-  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
-  paste("https://eurovision.tv", ., "/grand-final", sep="")       # Pasting the href into the URL
+  html_nodes(".views-field-field-event-year a") %>%     # Asking R to find this data on the webpage
+  html_attr("href") %>%   # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/grand-final", sep="") # Pasting the href into the URL
 
 
 # retrieving the tables and the years from each year link
 get_data <- lapply(year_links, function(i) {
-  year_page = read_html(i)                                        # Reading each URL link into R
+  year_page = read_html(i)  # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
     html_table() %>% 
-    .[[1]]                                                        # Scraping the data tables from each URL link
-  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
-  year_data$year <- year                                          # Adding the year data to the data tables
+    .[[1]]   # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")  # Extracting the year from the URL links
+  year_data$year <- year   # Adding the year data to the data tables
   
-  return(year_data)                                               # Asking R to return the datatable 
+  return(year_data) # Asking R to return the datatable 
 })
 
 
@@ -157,22 +154,22 @@ page = read_html(link) # downloading the link for page 2
 year_links = page %>% 
 html_nodes("tr:nth-child(2) .views-field-field-event-year a , 
 tr:nth-child(3) .views-field-field-event-year a , 
-tr:nth-child(1) .views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
-  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
-  paste("https://eurovision.tv", ., "/grand-final", sep="")       # Pasting the href into the URL
+tr:nth-child(1) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
+  html_attr("href") %>%       # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/grand-final", sep="") # Pasting the href into the URL
 
 
 # retrieving the tables and the years from each year link
 get_data <- lapply(year_links, function(i) {
-  year_page = read_html(i)                                        # Reading each URL link into R
+  year_page = read_html(i)    # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
     html_table() %>%  
-    .[[1]]                                                        # Scraping the data tables from each URL link
-  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
-  year_data$year <- year                                          # Adding the year data to the data tables
+    .[[1]]       # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")  # Extracting the year from the URL links
+  year_data$year <- year   # Adding the year data to the data tables
   
-  return(year_data)                                               # Asking R to return the datatable 
+  return(year_data)    # Asking R to return the datatable 
 })
 
 # Adding all data to a new datatable called scrape04
@@ -201,22 +198,22 @@ tr:nth-child(12) .views-field-field-event-year a ,
 tr:nth-child(13) .views-field-field-event-year a , 
 tr:nth-child(14) .views-field-field-event-year a , 
 tr:nth-child(15) .views-field-field-event-year a , 
-tr:nth-child(4) .views-field-field-event-year a") %>%             # Asking R to find this data on the webpage
-  html_attr("href") %>%                                           # Extract href (e.g., turin-2022) from scraped data
-  paste("https://eurovision.tv", ., "/final", sep="")             # Pasting the href into the URL
+tr:nth-child(4) .views-field-field-event-year a") %>%  # Asking R to find this data on the webpage
+  html_attr("href") %>%     # Extract href (e.g., turin-2022) from scraped data
+  paste("https://eurovision.tv", ., "/final", sep="") # Pasting the href into the URL
 
 
 # retrieving the tables and the years from each year link
 get_data <- lapply(year_links, function(i) {
-  year_page = read_html(i)                                        # Reading each URL link into R
+  year_page = read_html(i)   # Reading each URL link into R
   year_data = year_page %>% 
     html_nodes("table.cols-7") %>% 
     html_table() %>%  
-    .[[1]]                                                        # Scraping the data tables from each URL link
-  year <- str_extract(i, "\\d{4}")                                # Extracting the year from the URL links
-  year_data$year <- year                                          # Adding the year data to the data tables
+    .[[1]]     # Scraping the data tables from each URL link
+  year <- str_extract(i, "\\d{4}")  # Extracting the year from the URL links
+  year_data$year <- year   # Adding the year data to the data tables
   
-  return(year_data)                                               # Asking R to return the datatable 
+  return(year_data)  # Asking R to return the datatable 
 })
 
 
@@ -283,7 +280,9 @@ The same set of code has also been used to drop columns that contain irrelevant 
 
 ```{r message = FALSE}
 df1 <- df %>% 
-  select(year, country, participant, song, points, rank) %>% # dropping the unnecessary columns
+  select(year, country, 
+         participant, song, 
+         points, rank) %>% # dropping the unnecessary columns
   unique() #remove duplicate rows 
 ```
 
@@ -334,16 +333,17 @@ df3 <- df2 %>%
                                    year == 1964 | year == 1965 | 
                                      year == 1966 ~ voting_system64))
 
-# Changing the order of the voting systems in the dataset so that they appear in chronological order
+# Changing the order of the voting systems in the dataset
 
-df3$voting_system <- factor(df3$voting_system, 
-                            levels = c("10 points split between one to ten songs", 
-                                       "One set of points (3, 2, 1) awarded to three songs", 
-                                       "One set of points (5, 4, 3, 2, 1) awarded to five songs",
-                                       "One set of points (5, 3, 1) awarded to three songs", 
-                                       "2-10 points awarded to each song", 
-                                       "One set of points (12, 10, 8, 7, ....1) awarded to ten songs",
-                                       "Two sets of points (12, 10, 8, 7, ....1) awarded to ten songs"))
+df3$voting_system <- 
+  factor(df3$voting_system, 
+         levels = c("10 points split between one to ten songs", 
+                    "One set of points (3, 2, 1) awarded to three songs", 
+                    "One set of points (5, 4, 3, 2, 1) awarded to five songs",
+                    "One set of points (5, 3, 1) awarded to three songs", 
+                    "2-10 points awarded to each song", 
+                    "One set of points (12, 10, 8, 7, ....1) awarded to ten songs",
+                    "Two sets of points (12, 10, 8, 7, ....1) awarded to ten songs"))
 
 ```
 
@@ -380,7 +380,7 @@ df4$participant <- ifelse(df4$year == 1969,
                     paste(unique(df4$participant[df4$year == 1969]), collapse = ", "),
                     df4$participant)
 
-# Removing the duplicate columns for 1969, leaving one row containing all the data from 1969
+# Removing the duplicate columns for 1969. One row for 1969 left
 df5 <- df4 %>% 
   unique()
 
@@ -437,12 +437,12 @@ p1 <- p1 + geom_point(size = 2.5) +
 # Converting the ggplot into a ggplotly animation with hover labels
 
 p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
-               height = 600) %>%                                   # Converting to a plotly graph with specified size
-  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4),     # Changing the margins of the plot
+               height = 600) %>%        # Converting to a plotly graph with specified size
+  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4), # Changing the margins of the plot
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    subtitle,'</sup>')),             # Adding a subtitle to the plot
+                                    subtitle,'</sup>')),  # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
@@ -450,16 +450,16 @@ p1 <- ggplotly(p1, tooltip = c("text"), width = 800,
                             yref = "paper", 
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
-                            font=list(size=13)))                   # Adding a annotation to the plot
+                            font=list(size=13)))  # Adding a annotation to the plot
 p1 <- p1 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
-                             y =-0.2)) %>%                         # Changing the legend to be horizontal
+                             y =-0.2)) %>%  # Changing the legend to be horizontal
   style(legendgroup = NULL)
 
 p1
 
-saveWidget(p1, file = here("figs", "points_total_esc.html"))            # Save the plot in the figs folder
+saveWidget(p1, file = here("figs", "points_total_esc.html"))  # Save the plot
 ```
 
 
@@ -542,12 +542,12 @@ p2 <- p2 + geom_point(size = 2.5) +
 # Converting the ggplot into a ggplotly animation with hover labels
 
 p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
-               height = 600) %>%                                    # Converting to a plotly graph with specified size
-  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4),      # Changing the margins of the plot
+               height = 600) %>%     # Converting to a plotly graph with specified size
+  layout(margin = list(l = 30, r = 30, b=60, t = 60, pad = 4), # Changing the margins of the plot
          title = list(text = paste0(plottitle,
                                     '<br>',
                                     '<sup>',
-                                    subtitle,'</sup>')),             # Adding a subtitle to the plot
+                                    subtitle,'</sup>')),  # Adding a subtitle to the plot
          annotations = list(x = 1, y = -0.2,
                             text = caplab,
                             showarrow = FALSE,
@@ -555,16 +555,16 @@ p2 <- ggplotly(p2, tooltip = c("text"), width = 700,
                             yref = "paper", 
                             xanchor="right", yanchor="auto", 
                             xshift = 0, yshift=0, 
-                            font=list(size=13)))                    # Adding a annotation to the plot
+                            font=list(size=13)))  # Adding a annotation to the plot
 p2 <- p2 %>%  layout(legend = list(orientation = 'h', 
                              xanchor = "center",
                              x = 0.5, 
-                             y =-0.2)) %>%                          # Changing the legend to be horizontal
+                             y =-0.2)) %>%  # Changing the legend to be horizontal
   style(legendgroup = NULL)
 
 p2
 
-saveWidget(p2, file = here("figs", "points_share_esc.html"))             # Save the plot as a html
+saveWidget(p2, file = here("figs", "points_share_esc.html"))  # Save the plot
 
 ```
 
@@ -587,5 +587,6 @@ Finally, this Eurovision data could also be used to determine whether certain co
 Repo: https://github.com/paulgering/PSY6422_project
 Eurovision website: https://eurovision.tv
 Eurovision.World website: https://eurovisionworld.com
+
 
 
