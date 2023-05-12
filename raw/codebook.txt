@@ -1,0 +1,103 @@
+Description of data:
+esc_raw_data.csv – 
+contains data for all participating songs, countries and artists in the Eurovision Song Contest between 1956 and 2022. The data was scraped from the Eurovision website “https://eurovision.tv/history” in four sets of code and combined into a dataframe called df_esc. This data frame was converted into this CSV file and added to the “raw” folder. The columns in this dataset include: 
+  **X** is the numbered row that the data appears in 
+  **R/O Sort descending** is the order in which the songs performed in the contest,
+  **Half** is whether the country performed in the first or second half of the contest,
+  **Country** is the name of the participating country,
+  **Participant** is the name of the artist, 
+  **Song** is the name of the song,
+  **Points** is the total amount of points each country received, 
+  **Rank** is the position which the song achieved in the final, and
+  **year** is the year of the competition.
+
+Description of variables:
+SECTION: DATA SCRAPING 
+df_esc – data frame
+	Desc: containing data from all Eurovision competition (final shows). Created by combining the following data frames: scrape04, scrape07, scrape56, scrape92. This data frame was saved as “esc_raw_data” in the “raw” folder
+i – function argument
+	Desc: when the function is called, i denotes where the URL links for the scraped data should be added to the function. In one section, I is used to ask R to read all the URL links using the function read_html() and add them to the variable year_page. 
+link – value
+	Desc: contains the URL link for the Eurovision webpage where the nested links for the data tables will be scraped from. The value of “link” will vary depending on the section of code. For example, for the code that creates the data frame scrape07, “link” equals “https://eurovision.tv/history”.
+page_result - value
+	Desc: Iteration number used within loops. This is used to scrape data from multiple Eurovision webpages using a single piece of code, to create the data frame scrape56. 
+scrape04 – data frame
+	Desc: containing scraped data from the Grand final of the Eurovision competitions (2004:2006). 
+scrape07 – data frame
+	Desc: data frame containing scraped data from the Grand final of the Eurovision competitions (2007:2022).
+scrape56 – data frame
+	Desc: containing scraped data from the Eurovision competitions (1956:1991).
+scrape92 – data frame
+	Desc: containing scraped data from the Eurovision competitions (1992:2003).
+Year - value
+	Desc: contains a list of years relating to the scraped data tables. These were taken from year_links and will be added to the data table year_data. The value of year will depend on the section of code. For example, for the code that creates the dataframe scrape56, year will be an integer list from 1956 to 1991. 
+year_data – data table
+	Desc: created from scraping the tables from the Eurovision website. year_data is part of multiple functions to scrape and gather data tables from nested URL links on the Eurovision website. 
+year_page - value
+	Desc: contains the URL links for each data table on the Eurovision website that have been downloaded into R. 
+year_links - value
+	Desc: contains a list of URL links for the data tables on the Eurovision website that need to be downloaded into R and scraped. The value of year_links can vary depending on the section of code. For example, for the code that creates the data frame scrape56, year_links is a list of the URL links for the Eurovision competition data between 1956 and 1991. 
+
+SECTION: DATA PREPARATION 
+df – data frame
+	Desc: created by loading “esc_raw_data” into R.
+df1 – data frame
+	Desc: updated version of df. The relevant columns have been filtered out and duplicate rows have been removed. 
+df2 -data frame
+	Desc: updated version of df1. Missing data has been converted to zeros and data from the 1956 competition has been removed. 
+df3 – data frame
+	Desc: updated version of df2. A new column called voting_system has been added to the data frame. 
+df4 – data frame
+	Desc: updated version of df3. This data has been filtered by rank so that only data from the winning songs are presented. 
+df5 – data frame
+	Desc: updated version of df4. The multiple rows for the winning songs in 1969 have been collapsed, so that all the data for these songs is presented on one data frame
+df6 – data frame
+	Desc: updated version of df3. A column has been added for share of points achieved by each song in each year. 
+df7 – data frame
+	Desc: updated version of df6. This data has been filtered by rank so that only data from the winning songs are presented. 
+df8 – data frame
+	Desc: updated version of df7. The multiple rows for the winning songs in 1969 have been collapsed, so that all the data for these songs is presented on one data frame
+voting_system16 - value
+	Value: " Two sets of points (12, 10, 8, 7, ....1) awarded to ten songs"
+	Desc: description of the voting system used for the Eurovision Song Contest from 2016 to present. Information summarised from eurovisionworld.com
+voting_system57 - value
+	Value: "10 points split between one to ten songs "
+	Desc: description of the voting system used for the Eurovision Song Contest from 1957 to 1961, 1967 to 1970 and in 1974. Information summarised from eurovisionworld.com
+voting_system62 - value
+	Value: "One set of points (3, 2, 1) awarded to three songs"
+	Desc: description of the voting system used for the Eurovision Song Contest in 1962. Information summarised from eurovisionworld.com
+voting_system63 - value
+	Value: "One set of points (5, 4, 3, 2, 1) awarded to five songs"
+	Desc: description of the voting system used for the Eurovision Song Contest in 1963. Information summarised from eurovisionworld.com
+voting_system64 - value
+	Value: "One set of points (5, 3, 1) awarded to three songs"
+	Desc: description of the voting system used for the Eurovision Song Contest from 1964 to 1966. Information summarised from eurovisionworld.com
+voting_system71 - value
+	Value: "2-10 points awarded to each song"
+	Desc: description of the voting system used for the Eurovision Song Contest from 1971 to 1973. Information summarised from eurovisionworld.com 
+voting_system75 - value
+	Value: " One sets of points (12, 10, 8, 7, ....1) awarded to ten songs"
+	Desc: description of the voting system used for the Eurovision Song Contest from 1975 to 2015. Information summarised from eurovisionworld.com
+
+SECTION: DATA VISUALISATION
+caplab – value
+	Value: “Source: eurovision.tv/history”
+	Desc: label for the source of the data in p1 and p2
+grouplab - value
+	Value: “Voting system for each country”
+	Desc: label for the legend in p1 and p2
+p1 – plotly graph
+	Desc: scatter plot with hover capabilities with points on the x axis and year on the y axis. Voting system is used as a grouping variable. 
+p2 – plotly graph 
+	Desc: scatter plot with hover capabilities with share of points on the x axis and year on the y axis. Voting system is used as a grouping variable. 
+plottitle - value
+	Value: “Points allocation in the Eurovision Song Contest”
+	Desc: label used for the title of p1 and p2 
+subtitle - value
+	Value: “Points of the winning songs 1957-2022”
+	Desc: label used for the title of p1 and p2 
+subtitle2 - value
+	Value: “Share of points of the winning songs 1957-2022”
+	Desc: label used for the title of p1 and p2 
+
+
