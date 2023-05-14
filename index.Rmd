@@ -65,8 +65,12 @@ library(orca)
 The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. You can only access the data from one year at a time, by selecting the year that you would like to view on this page. Selecting the year would take you to an overview page that would appear in the following format <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2023 competition "https://eurovision.tv/event/liverpool-2023/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from the URLs for each year and combine them into a large dataset.
 
 # Data scraping
+### The approach used to scrape data 
+I first had to scrape the URL links that contained the data tables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser extension **SelectorGadget**. A description of SelectorGadget is provided at the following link: <https://rvest.tidyverse.org/articles/selectorgadget.html>. 
 
-I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2008 and 2023. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1992. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1993-2003) and "/grand-final" at the end of their URL (2004-2007). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. The rest of the code used to scrape data from pages 1 and 2 is provided in the R Markdown file. 
+A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link containing the data tables finished with "/final". However, for the competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. Each piece of code was relatively similar, except that they created a list of URL links that ended in "/final" or "/grand-final". One set of code was used to scrape data from page 1, containing the year links for competitions between 2008 and 2023. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1992. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1993-2003) and "/grand-final" at the end of their URL (2004-2007). 
+
+Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to four data frames in R, one for each piece of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. The rest of the code used to scrape data from pages 1 and 2 is provided in the R Markdown file. 
 
 
 ```{r message = FALSE}
@@ -210,7 +214,7 @@ scrape93 = data.table::rbindlist(get_data)
 ```
 
 ### Combining the scraped data
-Once I had scraped all the Eurovision data, the four dataframes were combined using the function rbind(). The final dataframe containing all the data was saved as a CSV file.
+Once all the data was scraped from the Eurovision website, the four dataframes were combined using the rbind() function. The final dataframe containing all the data was saved as a CSV file.
 
 ```{r message = FALSE}
 # Combining the four datasets into a dataframe and saving it as a csv
@@ -221,9 +225,9 @@ write.csv(df_esc, here("raw", "esc_raw_data.csv"))
 
 ```
 
-### A limitation of this data scraping method
+### A limitation of the data scraping method
 
-To scrape the URL's from the second page on the Eurovision website <https://eurovision.tv/history?page=1>, two sets of code had to be used. These codes were identical except one piece of code scraped URL links ending in "final" and the other scraped URL links ending in "/grand-final". For this method to work, SelectorGadget was used to highlight the location of the year links that I wanted to scrape for each piece of code. This means that my code to scrape data from page 2 is dependent of the location of the year links on this page. Once the data from a new competition is added to the Eurovision website, this may shift the location of the year links on this page, which will affect the data that is scraped by my R code. For example, code that is designed to scrape URL's that end with "/final" may try to scrape URL's from the 2004 competition. This could prevent the R code from working because it is attempting to locate a URL that does not exist.
+The Eurovision webpage used to scrape the data for this project changes every year around early May, when a new competition is staged and the data from this competition is added to the webpage. The data from the 2023 competition was added on the 14th May 2023. The data scraping method used in this project is not flexible to these changes. Four pieces of code were used to scrape data from specific years of the competition. Each piece of code creates a list of URL's to scrape data from, which either end in "/final" or "/grand-final". Any changes to the website may affect the data that each piece of code attempts to scrape. For example, the code used to scrape data from the competitions between 1993 and 2003 may attempt to scrape data from the 2004 competition. Since the data for the 2004 competition is located in a URL that ends with "/grand-final" rather than "/final", the R code would be attempting to locate a URL that does not exist. Therefore, once the data from the 2024 competition is added to the Eurovision website, this R code may fail to scrape the data fully.
 
 By saving the scraped data as a CSV file, I have tried to minimise the impact that changes to the Eurovision website have on the rest of this R project. The data management and visualisation sections of this project will use a new data frame, produced by reading the CSV file into R. 
 
@@ -288,7 +292,7 @@ df2 <- df1 %>%
   filter(year != 1956) # filter out data from 1956
 ```
 
-### Additional information added to the dataframe
+### Voting system data added to the dataframe
 
 **Voting system data** was taken manually from the website Eurovision.World.com, a fan website dedicated to the Eurovision Song Contest (<https://eurovisionworld.com/esc/voting-systems-in-eurovision-history>). The reason this website was chosen was because the information is not presented on the Eurovision website. Other information on the Eurovision.World.com has been checked with the Eurovision website for accuracy such as the points totals in specific years of the competition. The voting system data was not scraped directly from Eurovision.World.com because the data was not presented in a format that would complement a visualisation. The descriptions were too long and may have been difficult for a non-Eurovision fan to understand. Instead, the data was summarised and added to seven voting systems variables in R. The number at the end of each variable name represents the year that the voting system was introduced.
 Using the mutate function, this data was added to the data frame as new column called voting system.
@@ -336,7 +340,7 @@ df3$voting_system <-
 ```
 
 
-### Creating a dataframe with only the winning songs for each year
+### Extracting the winning songs
 
 Since the visualisation will only present data for the winning songs, I needed to filter this data out of the dataset. I felt that it would be a more intuitive and interesting to visualise the points totals for the winning songs than to visualise the total or average number of points.
 
@@ -348,6 +352,8 @@ df4 <- df3 %>%
 
 head(df4)
 ```
+
+### Collapsing the rows for the 1969 competition
 
 The new dataframe contains four rows for the 1969 competition, because there were four winners in 1969. I wanted to collapse these four rows so that the information for all the winning songs, participants and countries appears in a single row. This would be beneficial when adding the information to a scatter plot as it meant that I could add a label to the data containing all the information for the winners in the 1969 competition. Collapsing the four rows was made easier by the fact that the winning songs in 1969 had the same points total, rank and year.
 
@@ -497,7 +503,7 @@ df8 <- df7 %>%
 
 ```
 
-### Visualisation 2 - additional variable
+### Visualisation 2 - Additional label
 
 A new subtitle will be needed for this visualisation: 
 
@@ -563,7 +569,7 @@ saveWidget(p2, file = here("figs", "points_share_esc.html"))  # Save the plot
 
 ```
 
-### Visualisation 2 - summary
+### Visualisation 2 - Summary
 Visualisation 2 is more successful at demonstrating the impact of the voting system changes have had on the points received by the winning songs than visualisation 1. 
 
 In particular, visualisation 2 is effective at showing the impact that the voting system had on points allocation for the early years of the competition (1957-1974). The frequent changes in the voting system in the first 20 years of the competition led to large variability in the share of points achieved by the winning song. In 1964, Italy received the highest share of points in the Eurovision Song Contest so far with 34.03%. In contrast, Luxembourg received the lowest shared of points of any winning song in the contest in 1972 with 8.3%. The reason for this is that the voting system in 1972 meant that each country awarded more points to their favourite song and awarded more countries points, in comparison with the 1964 voting system.
