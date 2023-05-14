@@ -64,9 +64,9 @@ library(orca)
 ### Data Origins 
 The raw data was scraped from the Eurovision Website <https://eurovision.tv/history>. The data for each year of the competition is located in nested links from this page. You can only access the data from one year at a time, by selecting the year that you would like to view on this page. Selecting the year would take you to an overview page that would appear in the following format <https://eurovision.tv/event/turin-2022>. From this link, you have to select whether to view data from the semi finals or the final. Semi-finals were introduced in the 2004 competition as a way of allowing more countries to compete. This project is only interested in gathering data from the final shows since this will contain the data relating to the winning songs. The following link contains a data table showing the results from the 2023 competition "https://eurovision.tv/event/liverpool-2023/final". The data is presented in the same format for each year of the competition. For this project, I needed to scrape the tables from the URLs for each year and combine them into a large dataset.
 
-### Data scraping
+# Data scraping
 
-I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2008 and 2023. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1992. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1993-2003) and "/grand-final" at the end of their URL (2004-2007). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. 
+I first had to scrape the URL links that contained the datatables for each year. These links were scraped from the page <https://eurovision.tv/history> using the web browser SelectorGadget. A problem I encountered at this stage was that the URL links varied in an unexpected way. For the competitions before 2004, the URL link finished with "/final". However, for competitions that included a semi final (from 2004 onwards), the URL link finished with "/grand-final". This inconsistency meant that I was unable to scrape all the URL links using a single piece of code. To resolve this issue, I had to scrape the data using four sets of code. One set of code was used to scrape data from page 1, containing the year links for competitions between 2008 and 2023. Another set of code was used to scrape the year links from pages 3, 4 and 5, which contained year links for the competitions between 1956 and 1992. Two sets of code had to be used to scrape data from page 2, which contained data from competitions that had "/final" at the end of their URL (1993-2003) and "/grand-final" at the end of their URL (2004-2007). Once I had collected the URL links, I scraped the data tables from each URL link using the lapply() function. The scraped tables were added to a new dataframe in R, resulting in four dataframes being created to contain the data scraped from each set of code. Below is an example of the code used to scrape data from pages 3, 4 and 5. The rest of the code used to scrape data from pages 1 and 2 is provided in the R Markdown file. 
 
 
 ```{r message = FALSE}
@@ -375,15 +375,17 @@ df5 <- df4 %>%
 ```
 
 
-# Visualisation
+# Data Visualisation
 
-### Reasoning for visualisation 1
+### Visualisation 1 - Reasoning
 
 A scatter plot was most appropriate to visualise how the data changed over time. The year was used as the x axis and points as the y axis, with voting system as the grouping variable. The scale of the x axis was manually set to increase in sets of 5 to make the year data easier to read. The size of each point was increased so that more of the graph was filled and the graph would look less empty and more appealing. However, the size was not increased further to avoid too much overlap between the points.
 
 The plot was converted into a plotly interactive graph using the function ggplotly. This meant that the graph contained labels for each point which would appear when they were hovered over with the cursor. The text contained within each label was the year, the winning country, the song, the participant and the number of points they received. This information was important to include as it would provide further context as to why a winning song may have received more or less points. The datapoint for the 1969 competition will contain the data for the four winning songs in the year. Another benefit of using a Plotly graph is that you can double click on a voting system that you would like to display data for and the plot will isolate the datapoints from this voting system. Plotly can make it difficult to display titles, subtitles, and captions on a ggplot graph. These had to be added in once the graph was converted into a plotly graph using the layout() function. The choice was made to display the legend in a horizontal fashion below the graph. This was appropriate as the legend was long and would have reduced the space available for the graph if presented vertically alongside the graph. 
 
-### Labels for visualisation 1
+### Visualisation 1 - Labels 
+
+The labels for visualisation 1 were assigned to variables to enhance the readability of the R code used to create the plot.
 
 ```{r message = FALSE}
 #--------------PLOT DATA------------------
@@ -395,7 +397,7 @@ caplab <- "Source: eurovision.tv/history"
 subtitle <- "Points total of the winning songs 1957-2023"
 ```
 
-## Creating visualisation 1 
+### Visualisation 1 - R code
 
 ```{r message = FALSE}
 ### Creating visualisation 1
@@ -452,13 +454,15 @@ saveWidget(p1, file = here("figs", "points_total_esc.html")) # Save the plot
 
 ```
 
-### Visualisation 1 summary
+### Visualisation 1 - Summary
 Visualisation 1 shows that the points totals of the winning songs in the Eurovision Song Contest have increased exponentially over the years. Changes in the points totals have coincided with changes in the voting system, particularly in the early years of the competition. In the first few years, where fewer points were awarded to a smaller number of countries, the points totals for the winning songs were as low as 18 points in 1969, though another explanation for this low points total is that four countries won in that year. Changing the voting system in 1971 led to a rapid increase in the number of points given to the winning song, likely because each country awarded points to each of the songs. Between 1975 and 2003, the same voting system was used, which resulted in the points totals remaining consistent. From the 2004 competition, there is a slight increase in the point totals, which can be explained by the introduction of the semifinals leading to more countries voting in the final. Once the choice was made for each country to allocate two sets of points in 2016, the points totals of the winning songs increased again, leading to the highest points total that has been achieved in the Eurovision Song Contest, Portugal in 2017 with 758 points. 
 
 The aim of this project is partially achieved in visualisation 1. This interactive plot shows how changes in the voting system have affected the points totals of the winning songs. However, this plot does not isolate the effect of the voting system changes from the effect of the increasing number of panticipating countries on points allocation. Therefore, it is unclear whether the changes in the points totals of the winning songs are a result of the changes in the voting system. To accurately visualise how voting system has affected points allocation, a second visualisation was produced controlling for the number of participating countries.
 
-### Adapting the plot to control for the number of countries 
-To control for the number of participating countries, I calculated the share of points that the winning songs received in each year. This was calculated by dividing the total number of points awarded in each year by the number of points allocated to the winning song. To do this calculation, I added the share of points column to a version of the dataframe that was not filtered by rank.
+### Visualisation 2 - Controlling for the number of countries 
+I calculated the **share of points** that the winning songs received in each year by dividing the total number of points awarded in each year by the number of points allocated to the winning song. The aim was to isolate the effect of voting system and control for the number of participating countries in each year. 
+
+A new column was added to the data frame called "share_points". To calculate the share of points, I needed to use an earlier version of the data frame that was not filtered by rank. As a result, the additional changes that were made to df4 and df5 had to be repeated here. 
 
 ```{r message = FALSE}
 # Create a new column to show share of points 
@@ -493,7 +497,7 @@ df8 <- df7 %>%
 
 ```
 
-### Additional label for visualisation 2
+### Visualisation 2 - additional variable
 
 A new subtitle will be needed for this visualisation: 
 
@@ -501,9 +505,9 @@ A new subtitle will be needed for this visualisation:
 subtitle2 <- "Share of points of the winning songs 1957-2023"
 ```
 
-### Creating visualisation 2
+### Visualisation 2 - R code
 
-A similar code is used to construct visualisation 2 as visualisation 1. The only change is that share of points will be used for the y axis instead of points. 
+A similar code is used to construct visualisation 2 as visualisation 1. The main difference is that share of points will be used for the y axis instead of points. 
 
 ```{r message = FALSE}
 
@@ -559,7 +563,7 @@ saveWidget(p2, file = here("figs", "points_share_esc.html"))  # Save the plot
 
 ```
 
-### Visualisation 2 summary
+### Visualisation 2 - summary
 Visualisation 2 is more successful at demonstrating the impact of the voting system changes have had on the points received by the winning songs than visualisation 1. 
 
 In particular, visualisation 2 is effective at showing the impact that the voting system had on points allocation for the early years of the competition (1957-1974). The frequent changes in the voting system in the first 20 years of the competition led to large variability in the share of points achieved by the winning song. In 1964, Italy received the highest share of points in the Eurovision Song Contest so far with 34.03%. In contrast, Luxembourg received the lowest shared of points of any winning song in the contest in 1972 with 8.3%. The reason for this is that the voting system in 1972 meant that each country awarded more points to their favourite song and awarded more countries points, in comparison with the 1964 voting system.
