@@ -31,7 +31,7 @@ scrape93 - data frame
 	Desc: containing scraped data from the Eurovision competitions (1992:2003).
 Year - value
 	Desc: contains a list of years relating to the scraped data tables. These were taken from year_links and will be added to the data table year_data. The value of year will depend on the section of code. For example, for the code that creates the dataframe scrape56, year will be an integer list from 1956 to 1992. 
-year_data ? data table
+year_data - data table
 	Desc: created from scraping the tables from the Eurovision website. year_data is part of multiple functions to scrape and gather data tables from nested URL links on the Eurovision website. 
 year_page - value
 	Desc: contains the URL links for each data table on the Eurovision website that have been downloaded into R. 
