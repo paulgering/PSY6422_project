@@ -1740,6 +1740,19 @@
       ],
       "Hash": "035fba89d0c86e2113120f93301b98ad"
     },
+    "webshot": {
+      "Package": "webshot",
+      "Version": "0.5.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "callr",
+        "jsonlite",
+        "magrittr"
+      ],
+      "Hash": "cfd9342c76693ae53108a474aafa1641"
+    },
     "withr": {
       "Package": "withr",
       "Version": "2.5.0",

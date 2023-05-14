@@ -58,6 +58,7 @@ library(tidyverse)
 library(toOrdinal)
 library(rvest)
 library(htmlwidgets)
+library(orca)
 ```
 
 ### Data Origins 
@@ -446,7 +447,8 @@ p1 <- p1 %>%  layout(legend = list(orientation = 'h',
 
 p1
 
-saveWidget(p1, file = here("figs", "points_total_esc.html"))  # Save the plot
+saveWidget(p1, file = here("figs", "points_total_esc.html")) # Save the plot
+
 ```
 
 
