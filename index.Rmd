@@ -377,13 +377,13 @@ df5 <- df4 %>%
 
 # Visualisation
 
-### Creating visualisation 1
+### Reasoning for visualisation 1
 
 A scatter plot was most appropriate to visualise how the data changed over time. The year was used as the x axis and points as the y axis, with voting system as the grouping variable. The scale of the x axis was manually set to increase in sets of 5 to make the year data easier to read. The size of each point was increased so that more of the graph was filled and the graph would look less empty and more appealing. However, the size was not increased further to avoid too much overlap between the points.
 
 The plot was converted into a plotly interactive graph using the function ggplotly. This meant that the graph contained labels for each point which would appear when they were hovered over with the cursor. The text contained within each label was the year, the winning country, the song, the participant and the number of points they received. This information was important to include as it would provide further context as to why a winning song may have received more or less points. The datapoint for the 1969 competition will contain the data for the four winning songs in the year. Another benefit of using a Plotly graph is that you can double click on a voting system that you would like to display data for and the plot will isolate the datapoints from this voting system. Plotly can make it difficult to display titles, subtitles, and captions on a ggplot graph. These had to be added in once the graph was converted into a plotly graph using the layout() function. The choice was made to display the legend in a horizontal fashion below the graph. This was appropriate as the legend was long and would have reduced the space available for the graph if presented vertically alongside the graph. 
 
-### Labels for the visualisation 
+### Labels for visualisation 1
 
 ```{r message = FALSE}
 #--------------PLOT DATA------------------
@@ -395,6 +395,7 @@ caplab <- "Source: eurovision.tv/history"
 subtitle <- "Points total of the winning songs 1957-2023"
 ```
 
+## Creating visualisation 1 
 
 ```{r message = FALSE}
 ### Creating visualisation 1
@@ -451,7 +452,6 @@ saveWidget(p1, file = here("figs", "points_total_esc.html")) # Save the plot
 
 ```
 
-
 ### Visualisation 1 summary
 Visualisation 1 shows that the points totals of the winning songs in the Eurovision Song Contest have increased exponentially over the years. Changes in the points totals have coincided with changes in the voting system, particularly in the early years of the competition. In the first few years, where fewer points were awarded to a smaller number of countries, the points totals for the winning songs were as low as 18 points in 1969, though another explanation for this low points total is that four countries won in that year. Changing the voting system in 1971 led to a rapid increase in the number of points given to the winning song, likely because each country awarded points to each of the songs. Between 1975 and 2003, the same voting system was used, which resulted in the points totals remaining consistent. From the 2004 competition, there is a slight increase in the point totals, which can be explained by the introduction of the semifinals leading to more countries voting in the final. Once the choice was made for each country to allocate two sets of points in 2016, the points totals of the winning songs increased again, leading to the highest points total that has been achieved in the Eurovision Song Contest, Portugal in 2017 with 758 points. 
 
@@ -493,7 +493,7 @@ df8 <- df7 %>%
 
 ```
 
-### Creating visualisation 2
+### Additional label for visualisation 2
 
 A new subtitle will be needed for this visualisation: 
 
@@ -501,7 +501,9 @@ A new subtitle will be needed for this visualisation:
 subtitle2 <- "Share of points of the winning songs 1957-2023"
 ```
 
-A similar code is used to construct visualisation 2 asvisualisation 1. The only change is that share of points will be used for the y axis instead of points. 
+### Creating visualisation 2
+
+A similar code is used to construct visualisation 2 as visualisation 1. The only change is that share of points will be used for the y axis instead of points. 
 
 ```{r message = FALSE}
 
