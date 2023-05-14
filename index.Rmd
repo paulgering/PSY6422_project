@@ -223,9 +223,9 @@ write.csv(df_esc, here("raw", "esc_raw_data.csv"))
 
 ### A limitation of this data scraping method
 
-To scrape the URL's from the second page on the Eurovision website <https://eurovision.tv/history?page=1>, two sets of code had to be used. These codes were identical except one piece of code scraped URL links ending in "final" and the other scraped URL links ending in "/grand-final". For this method to work, SelectorGadget was used to highlight the location of the year links that I wanted to scrape for each piece of code. This means that my code to scrape data from page 2 is dependent of the location of the year links on this page. Once the data from a new competition is added to the Eurovision website, this may shift the location of the year links on this page, which will affect the data that is scraped by my R code. For example, code that is designed to scrape URL's that end with "/final" may try to scrape URL's from the 2004 competition. This could prevent the R code from working because R is attempting to locate a URL that does not exist.
+To scrape the URL's from the second page on the Eurovision website <https://eurovision.tv/history?page=1>, two sets of code had to be used. These codes were identical except one piece of code scraped URL links ending in "final" and the other scraped URL links ending in "/grand-final". For this method to work, SelectorGadget was used to highlight the location of the year links that I wanted to scrape for each piece of code. This means that my code to scrape data from page 2 is dependent of the location of the year links on this page. Once the data from a new competition is added to the Eurovision website, this may shift the location of the year links on this page, which will affect the data that is scraped by my R code. For example, code that is designed to scrape URL's that end with "/final" may try to scrape URL's from the 2004 competition. This could prevent the R code from working because it is attempting to locate a URL that does not exist.
 
-By saving the scraped data as a CSV file, I have tried to minimise the impact that changes to the Eurovision website have on this R project. The rest of the R code, that is focused on data management and visualisation, will run based off the data in this CSV file. 
+By saving the scraped data as a CSV file, I have tried to minimise the impact that changes to the Eurovision website have on the rest of this R project. The data management and visualisation sections of this project will use a new data frame, produced by reading the CSV file into R. 
 
 ```{r}
 
@@ -577,5 +577,5 @@ Repo: https://github.com/paulgering/PSY6422_project
 Eurovision website: https://eurovision.tv
 Eurovision.World website: https://eurovisionworld.com
 
-
+The references provided are not permanent citations. The Eurovision website and Eurovision.World website did not contain a DOI that could be referenced in this project. These webpages may change or be removed in the future, which may impact the reproducibility of certain elements of this project such as the data scraping section. 
 
