@@ -1,6 +1,6 @@
 Description of data:
 esc_raw_data.csv - 
-contains data for all participating songs, countries and artists in the Eurovision Song Contest between 1956 and 2023. The data was scraped from the Eurovision website ?https://eurovision.tv/history? in four sets of code and combined into a dataframe called df_esc. This data frame was converted into this CSV file and added to the ?raw? folder. The columns in this dataset include: 
+contains data for all participating songs, countries and artists in the Eurovision Song Contest between 1956 and 2023. The data was scraped from the Eurovision website "https://eurovision.tv/history" in four sets of code and combined into a dataframe called df_esc. This data frame was converted into this CSV file and added to the "raw"" folder. The columns in this dataset include: 
   **X** is the numbered row that the data appears in 
   **R/O Sort descending** is the order in which the songs performed in the contest,
   **Half** is whether the country performed in the first or second half of the contest,
