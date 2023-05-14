@@ -9,4 +9,4 @@ The project was coded in the statistical environment R.
 
 /raw contains the raw data used for this project, which was scraped from the Eurovision website <https://eurovision.tv/history>. The codebook is also contained within this folder, which describes the structure of the raw data and the variables used in the R code. 
 
-/figs contains the figures produced from this project as well as the eurovision logo which appears at the top of the RMarkdown page. 
+/figs contains the figures produced from this project as well as the eurovision logo which appears at the top of the RMarkdown page. Since the html versions of the plots are too big to display on github, screenshots have been taken of the html plots and added to github manually. 
